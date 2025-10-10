@@ -4,7 +4,17 @@ Turn a fresh Arch installation into a fully-configured, beautiful, and modern we
 
 Read more at [omarchy.org](https://omarchy.org).
 
-## Omnixy (Nix) Secrets Example
+### Import and Override in your flake
+- Add input: `omnixy.url = "github:your/repo"` (or local `path:../..`).
+- NixOS: `modules = [ inputs.omnixy.nixosModules.default { omnixy.enable = true; omnixy.username = "me"; } ];`
+- Home Manager: `imports = [ inputs.omnixy.homeManagerModules.default { omnixy.enable = true; omnixy.desktop.enable = true; } ];`
+- Overlay: `nixpkgs.overlays = [ inputs.omnixy.overlays.default ];`
+
+### Examples
+- Home Manager: see `examples/hm/flake.nix` (links dotfiles and theme config).
+- NixOS: see `examples/nixos/flake.nix` (minimal evaluable demo).
+
+## Omnixy (Nix) Usage
 
 - Example files live under `secrets/`:
   - `secrets/secrets.example.yaml`: copy to `secrets/secrets.yaml` and encrypt with `sops`.
@@ -21,7 +31,7 @@ Encrypting
 - Create `.sops.yaml` from the example and put your public key under `keys:`.
 - Encrypt: `sops -e -i secrets/secrets.yaml` (install `sops` if needed).
 
-Using a secret in services
+## Secrets Example
 - Option A (recommended): enable omnixy’s Tailscale module and point it at the secret file/key.
   - `omnixy.secrets.enable = true;`
   - `omnixy.tailscale.enable = true;`

@@ -57,6 +57,14 @@ in {
       // (if has "ghostty.conf" then { "ghostty/config".source = themeDir + "/ghostty.conf"; } else {})
       # File manager helpers
       // (if has "walker.css" then { "walker/style.css".source = themeDir + "/walker.css"; } else {})
+      # btop theme
+      // (if has "btop.theme" then { "btop/themes/omnixy.theme".source = themeDir + "/btop.theme"; } else {})
+      # eza theme
+      // (if has "eza.yml" then { "eza/theme.yml".source = themeDir + "/eza.yml"; } else {})
+      # Neovim theme snippet
+      // (if has "neovim.lua" then { "nvim/lua/omnixy/theme.lua".source = themeDir + "/neovim.lua"; } else {})
+      # VSCode settings (optional)
+      // (if has "vscode.json" then { "vscode/settings.json".source = themeDir + "/vscode.json"; } else {})
     );
 
     # Common programs toggles for desktop
