@@ -13,6 +13,7 @@ in {
     ./portals.nix
     ./hardware
     ./secrets.nix
+    ./tailscale.nix
   ];
   options.omnixy = {
     enable = mkEnableOption "Omnixy base NixOS configuration";

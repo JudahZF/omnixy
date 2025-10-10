@@ -1,0 +1,5 @@
+# Secrets (use sops)
+secrets/secrets.yaml
+.sops.yaml
+# Age keys (if you store locally)
+age.key
