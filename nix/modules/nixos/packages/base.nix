@@ -3,113 +3,120 @@ let
   inherit (lib) mkIf mkDefault mkEnableOption mkOption types optional;
   cfg = config.omnixy.packages;
 
-  basePackages = with pkgs; [
-    alacritty
-    avahi
-    bash-completion
-    bat
-    blueberry
-    brightnessctl
-    btop
-    cargo
-    clang
-    cups
-    cups-browsed
-    cups-filters
-    cups-pdf
-    docker
-    docker-buildx
-    docker-compose
-    dust
-    evince
-    eza
-    fastfetch
-    fcitx5
-    fcitx5-gtk
-    fcitx5-qt
-    fd
-    ffmpegthumbnailer
-    fontconfig
-    fzf
-    gh
-    gnome-calculator
-    gnome-keyring
-    gnome-themes-extra
-    gum
-    gvfs
-    hypridle
-    hyprland
-    # hyprland-qtutils (no direct package; QT Wayland libs instead)
-    hyprlock
-    hyprpicker
-    hyprshot
-    hyprsunset
-    imagemagick
-    imv
-    inetutils
-    iwd
-    jq
-    kdenlive
-    kvantum
-    kitty
-    ghostty
-    lazydocker
-    lazygit
-    less
-    libyaml
-    libqalculate
-    libreoffice-fresh
-    llvm
-    localsend
-    luarocks
-    mako
-    man-db
-    mariadb-connector-c
-    mise
-    mpv
-    nautilus
-    noto-fonts
-    noto-fonts-cjk
-    noto-fonts-emoji
-    nerdfonts
-    neovim
-    obs-studio
-    chromium
-    pamixer
-    pinta
-    playerctl
-    plocate
-    plymouth
-    polkit_gnome
-    postgresql
-    power-profiles-daemon
-    python3Packages.pygobject3
-    qt5.qtwayland
-    qt6.qtwayland
-    ripgrep
-    satty
-    slurp
-    starship
-    (gnome.sushi)
-    swaybg
-    swayosd
-    tuigreet
-    system-config-printer
-    tldr
-    tree-sitter
-    ufw
-    unzip
-    # Optional packages (only if available in this nixpkgs)
-  ]
-  ++ (with pkgs; [
-    ]
-    ++ (optional (pkgs ? uwsm) pkgs.uwsm)
-    ++ (optional (pkgs ? walker) pkgs.walker)
-    ++ (optional (pkgs ? wl-clip-persist) pkgs.wl-clip-persist)
-    ++ (optional (pkgs ? wl-screenrec) pkgs.wl-screenrec)
-    ++ [ waybar wf-recorder whois wireless-regdb wireplumber wl-clipboard xdg-desktop-portal-gtk xdg-desktop-portal-hyprland xmlstarlet xournalpp yaru-theme zoxide ]
-  )
-  ];
+  basePackages =
+    (with pkgs; [
+      alacritty
+      avahi
+      bash-completion
+      bat
+      blueberry
+      brightnessctl
+      btop
+      cargo
+      clang
+      cups
+      cups-browsed
+      cups-filters
+      cups-pdf
+      docker
+      docker-buildx
+      docker-compose
+      dust
+      evince
+      eza
+      fastfetch
+      fcitx5
+      fcitx5-gtk
+      fcitx5-qt
+      fd
+      ffmpegthumbnailer
+      fontconfig
+      fzf
+      gh
+      gnome-calculator
+      gnome-keyring
+      gnome-themes-extra
+      gum
+      gvfs
+      hypridle
+      hyprland
+      # hyprland-qtutils (no direct package; QT Wayland libs instead)
+      hyprlock
+      hyprpicker
+      hyprshot
+      hyprsunset
+      imagemagick
+      imv
+      inetutils
+      iwd
+      jq
+      kdenlive
+      libsForQt5.kvantum
+      kitty
+      lazydocker
+      lazygit
+      less
+      libyaml
+      libqalculate
+      libreoffice-fresh
+      llvm
+      localsend
+      luarocks
+      mako
+      man-db
+      mariadb-connector-c
+      mise
+      mpv
+      nautilus
+      noto-fonts
+      noto-fonts-cjk
+      noto-fonts-emoji
+      nerdfonts
+      neovim
+      obs-studio
+      chromium
+      pamixer
+      pinta
+      playerctl
+      plocate
+      plymouth
+      postgresql
+      power-profiles-daemon
+      python3Packages.pygobject3
+      qt5.qtwayland
+      qt6.qtwayland
+      ripgrep
+      satty
+      slurp
+      starship
+      (gnome.sushi)
+      swaybg
+      swayosd
+      tuigreet
+      system-config-printer
+      tldr
+      tree-sitter
+      ufw
+      unzip
+      waybar
+      wf-recorder
+      whois
+      wireless-regdb
+      wireplumber
+      wl-clipboard
+      xdg-desktop-portal-gtk
+      xdg-desktop-portal-hyprland
+      xmlstarlet
+      xournalpp
+      yaru-theme
+      zoxide
+    ])
+    ++ lib.optional (pkgs ? uwsm) pkgs.uwsm
+    ++ lib.optional (pkgs ? walker) pkgs.walker
+    ++ lib.optional (pkgs ? wl-clip-persist) pkgs.wl-clip-persist
+    ++ lib.optional (pkgs ? wl-screenrec) pkgs.wl-screenrec
+    ++ lib.optional (pkgs ? ghostty) pkgs.ghostty
+    ++ lib.optional (pkgs ? polkit_gnome) pkgs.polkit_gnome;
 
   unfreePackages = [
     pkgs."1password-cli"

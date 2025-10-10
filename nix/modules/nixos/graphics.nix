@@ -21,11 +21,6 @@ in {
 
   config = lib.mkMerge [
     (mkIf cfg.enable {
-      # NixOS 24.05+: hardware.graphics, keep hardware.opengl for compatibility
-      hardware.graphics = {
-        enable = mkDefault true;
-        extraPackages = mkDefault commonPkgs;
-      };
       hardware.opengl = {
         enable = mkDefault true;
         extraPackages = mkDefault commonPkgs;
@@ -33,14 +28,12 @@ in {
     })
 
     (mkIf cfg.intel.enable {
-      hardware.graphics.extraPackages = mkDefault intelPkgs;
-      hardware.opengl.extraPackages = mkDefault intelPkgs;
+      hardware.opengl.extraPackages = mkDefault (commonPkgs ++ intelPkgs);
       services.xserver.videoDrivers = lib.mkDefault [ "intel" ];
     })
 
     (mkIf cfg.amd.enable {
-      hardware.graphics.extraPackages = mkDefault amdPkgs;
-      hardware.opengl.extraPackages = mkDefault amdPkgs;
+      hardware.opengl.extraPackages = mkDefault (commonPkgs ++ amdPkgs);
       services.xserver.videoDrivers = lib.mkDefault [ "amdgpu" ];
     })
 

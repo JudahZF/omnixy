@@ -31,7 +31,7 @@ in {
     extraUpFlags = mkOption {
       type = types.listOf types.str;
       default = [];
-      description = "Extra flags for tailscale up (e.g., ["--ssh"]).";
+      description = "Extra flags for tailscale up (e.g., [ \"--ssh\" ]).";
     };
   };
 
@@ -42,14 +42,7 @@ in {
     }
 
     # Declare the secret via sops-secrets if requested and sops-nix is present
-    (mkIf (cfg.useSecret && hasSops && cfg.secret.file != null && cfg.secret.key != null) {
-      sops.secrets."${cfg.secret.name}" = {
-        sopsFile = cfg.secret.file;
-        key = cfg.secret.key;
-      };
-    })
-
-    # Wire the secret into Tailscale
+    # Wire the secret into Tailscale if present in config
     (let p = secretPath cfg.secret.name; in mkIf (cfg.useSecret && p != null) {
       services.tailscale.authKeyFile = p;
     })

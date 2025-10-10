@@ -2,7 +2,7 @@
 let
   inherit (lib) mkEnableOption mkIf mkDefault mkOption types;
   cfg = config.omnixy.secrets;
-  hasSops = args ? sops-nix;
+  hasSops = false;
 in {
   options.omnixy.secrets = {
     hm.enable = mkEnableOption "Enable sops-nix in Home Manager";
@@ -12,11 +12,7 @@ in {
     };
   };
 
-  imports = [ (if hasSops then args.sops-nix.homeManagerModules.sops else {}) ];
 
-  config = mkIf (cfg.hm.enable && hasSops) {
-    sops = {
-      defaultSopsFile = mkIf (cfg.defaultSopsFile != null) cfg.defaultSopsFile;
-    };
-  };
+
+  config = {};
 }

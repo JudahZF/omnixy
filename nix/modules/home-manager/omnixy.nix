@@ -19,7 +19,7 @@ in {
 
     # Install a few repo-managed dotfiles when enabled
     xdg.configFile = mkIf cfg.files.enable {
-      "starship.toml".source = ../../../starship.toml;
+      "starship.toml".source = ../../../config/starship.toml;
       "brave-flags.conf".source = ../../../config/brave-flags.conf;
       "chromium-flags.conf".source = ../../../config/chromium-flags.conf;
     };

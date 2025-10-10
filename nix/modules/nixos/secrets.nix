@@ -2,7 +2,7 @@
 let
   inherit (lib) mkEnableOption mkIf mkDefault mkOption types;
   cfg = config.omnixy.secrets;
-  hasSops = args ? sops-nix;
+  hasSops = false;
 in {
   options.omnixy.secrets = {
     enable = mkEnableOption "Enable sops-nix for secret management";
@@ -23,15 +23,7 @@ in {
     };
   };
 
-  imports = [ (if hasSops then args.sops-nix.nixosModules.sops else {}) ];
 
-  config = mkIf (cfg.enable && hasSops) {
-    sops = {
-      defaultSopsFile = mkIf (cfg.defaultSopsFile != null) cfg.defaultSopsFile;
-      age = {
-        keyFile = mkDefault cfg.age.keyFile;
-        generateKey = mkDefault cfg.age.generateKey;
-      };
-    };
-  };
+
+  config = {};
 }

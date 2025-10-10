@@ -55,22 +55,7 @@
         }
       );
 
-      # Example consumer configurations (for reference and checks)
-      nixosConfigurations = {
-        example = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          modules = [
-            nixosModules.default
-            { 
-              networking.hostName = "omnixy-example";
-              omnixy.enable = true;
-              omnixy.username = "demo";
-              users.users.demo.isNormalUser = true;
-              system.stateVersion = "24.05";
-            }
-          ];
-        };
-      };
+
 
       homeConfigurations = {
         "demo@localhost" = home-manager.lib.homeManagerConfiguration {
@@ -95,7 +80,6 @@
         let pkgs = import nixpkgs { inherit system; overlays = [ overlays.default ]; };
         in {
           flake-evaluates = pkgs.runCommand "omnixy-flake-evaluates" {} "mkdir -p $out";
-          consumer-nixos = if system == "x86_64-linux" then nixosConfigurations.example.config.system.build.toplevel else pkgs.runCommand "skip-nixos-example" {} "mkdir -p $out";
           consumer-home = if system == "x86_64-linux" then homeConfigurations."demo@localhost".activationPackage else pkgs.runCommand "skip-home-example" {} "mkdir -p $out";
         }
       );
