@@ -63,7 +63,7 @@ let
       iwd
       jq
       kdePackages.kdenlive
-      libsForQt5.qtstyleplugin-kvantum5
+      # libsForQt5.qtstyleplugin-kvantum5 Can't find ??
       kitty
       lazydocker
       lazygit
