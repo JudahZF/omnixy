@@ -83,7 +83,11 @@ let
       noto-fonts
       noto-fonts-cjk-sans
       noto-fonts-emoji
-      nerdfonts
+      nerd-fonts.caskaydia-mono
+      nerd-fonts.fira-code
+      nerd-fonts.jetbrains-mono
+      nerd-fonts.meslo-lg
+      nerd-fonts.victor-mono
       neovim
       obs-studio
       chromium
