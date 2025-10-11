@@ -39,7 +39,7 @@ let
       fastfetch
       fcitx5
       fcitx5-gtk
-      fcitx5-qt
+      # fcitx5-qt Doesn't exist in nixpkgs
       fd
       ffmpegthumbnailer
       fontconfig
