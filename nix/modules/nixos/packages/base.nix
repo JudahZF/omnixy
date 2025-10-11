@@ -112,7 +112,7 @@ let
       system-config-printer
       tldr
       tree-sitter
-      ufw
+      # ufw <- not a nix thing. Set up firewall config
       unzip
       waybar
       wf-recorder
