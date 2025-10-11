@@ -63,7 +63,7 @@ let
       iwd
       jq
       kdePackages.kdenlive
-      kdePackages.kvantum
+      libsForQt5.kvantum
       kitty
       lazydocker
       lazygit
