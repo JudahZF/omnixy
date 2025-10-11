@@ -108,7 +108,7 @@ let
       sushi
       swaybg
       swayosd
-      tuigreet
+      # tuigreet <-- Not found
       system-config-printer
       tldr
       tree-sitter
