@@ -105,7 +105,7 @@ let
       satty
       slurp
       starship
-      (gnome.sushi)
+      sushi
       swaybg
       swayosd
       tuigreet
