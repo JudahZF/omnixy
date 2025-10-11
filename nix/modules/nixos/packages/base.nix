@@ -1,6 +1,18 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
-  inherit (lib) mkIf mkDefault mkEnableOption mkOption types optional;
+  inherit (lib)
+    mkIf
+    mkDefault
+    mkEnableOption
+    mkOption
+    types
+    optional
+    ;
   cfg = config.omnixy.packages;
 
   basePackages =
@@ -17,7 +29,7 @@ let
       cups
       cups-browsed
       cups-filters
-      cups-pdf
+      # cups-pdf (Needs implemeting as settings)
       docker
       docker-buildx
       docker-compose
@@ -127,21 +139,25 @@ let
     pkgs.typora
   ];
 
-in {
+in
+{
   options.omnixy.packages = {
-    enable = mkEnableOption "Install Omnixy base package set" // { default = true; };
+    enable = mkEnableOption "Install Omnixy base package set" // {
+      default = true;
+    };
 
     unfree.enable = mkEnableOption "Include common unfree apps (1Password, Obsidian, Signal, Spotify, Typora)";
 
     extra = mkOption {
       type = types.listOf types.package;
-      default = [];
+      default = [ ];
       description = "Extra packages to add on top of Omnixy base set.";
     };
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = basePackages ++ cfg.extra ++ (if cfg.unfree.enable then unfreePackages else []);
+    environment.systemPackages =
+      basePackages ++ cfg.extra ++ (if cfg.unfree.enable then unfreePackages else [ ]);
 
     # Allow unfree when requested
     nixpkgs.config.allowUnfree = mkIf cfg.unfree.enable (mkDefault true);

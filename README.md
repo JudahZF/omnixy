@@ -7,7 +7,7 @@ Read more at [omarchy.org](https://omarchy.org).
 Note: Omnixy targets Linux/NixOS only.
 
 ### Import and Override in your flake
-- Add input: `omnixy.url = "github:your/repo"` (or local `path:../..`).
+- Add input: `omnixy.url = "github:JudahZF/omnixy"` (or local `path:../..`).
 - NixOS: `modules = [ inputs.omnixy.nixosModules.default { omnixy.enable = true; omnixy.username = "me"; } ];`
 - Home Manager: `imports = [ inputs.omnixy.homeManagerModules.default { omnixy.enable = true; omnixy.desktop.enable = true; } ];`
 - Overlay: `nixpkgs.overlays = [ inputs.omnixy.overlays.default ];`
@@ -109,4 +109,3 @@ Encrypting
 ## License
 
 Omarchy is released under the [MIT License](https://opensource.org/licenses/MIT).
-
