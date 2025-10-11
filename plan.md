@@ -40,7 +40,7 @@ This document captures the full plan, decisions, artifacts, and current status f
 - Examples:
   - `examples/hm/flake.nix`: HM consumer example.
   - `examples/nixos/flake.nix`: NixOS consumer example (minimal, evaluable setup).
-- CI: `.github/workflows/nix.yml` — Ubuntu + macOS, `nix flake check --all-systems`.
+- CI: `.github/workflows/nix.yml` — Linux (Ubuntu), `nix flake check --all-systems`. 
 - Secrets examples: `secrets/secrets.example.yaml`, `secrets/.sops.yaml.example`; gitignored real files.
 
 ## Consumer Usage
@@ -60,7 +60,7 @@ This document captures the full plan, decisions, artifacts, and current status f
 ## Testing
 - Local: `nix flake check --all-systems --print-build-logs --show-trace`.
 - Build scripts: `nix build .#omnixy-scripts`.
-- CI: Runs on PRs and pushes to `main/master` for Ubuntu + macOS.
+- CI: Runs on PRs and pushes to `main/master` on Ubuntu Linux.
 
 ## Task Tracker
 
@@ -75,22 +75,23 @@ Completed
 8. Home Manager: base profile, dotfiles option, desktop theme module (Hyprland/Waybar/Mako/terminals).
 9. Secrets: examples and docs; .gitignore sensitive files.
 10. Tailscale: module with optional sops secret wiring and extra flags.
-11. CI: GitHub Actions workflow to run `nix flake check` (Ubuntu + macOS, `--all-systems`).
+11. CI: GitHub Actions workflow to run `nix flake check` on Linux (Ubuntu, `--all-systems`).
 12. Flake checks: fix eval/build issues until green across systems.
 13. Document consumer import/override patterns (README updates).
 14. Sops-nix integration: document consumer pattern; optional shims present (not exported).
 15. Desktop completeness: link btop, eza, Neovim, VSCode theme files when present.
 16. Example consumer flakes (HM + NixOS) added and referenced.
+17. Package gaps: prefer nixpkgs packages; fall back to nixpkgs-unstable for `walker` and `wl-screenrec` when absent.
+18. VM test: minimal NixOS VM test added; boots and validates Hyprland/Waybar presence; wired into checks.
+19. Installer docs: README covers `nixos-install` and `nixos-anywhere`; optional custom ISO noted.
+20. Backcompat: `bin/omarchy` shim detects Arch/NixOS and points to Omnixy; deprecation note in README.
+21. Release plan: README adds preview plan and migration path sections.
+22. homeManagerModules warning: documented as benign in README.
+23. Cachix: README docs and optional CI variables noted; step scaffolded in workflow.
+24. Flake templates: consumer templates exposed via flake outputs (pointing to examples).
 
 Pending
-17. Package gaps: optionally package third‑party tools when absent in nixpkgs (e.g., `walker`, `wl-screenrec`).
-18. VM test: add minimal NixOS VM test (QEMU) to boot Hyprland and load Waybar; add to `checks`.
-19. Installer docs: document `nixos-install` and `nixos-anywhere`; consider custom ISO profile later.
-20. Backcompat: CLI shim that detects Arch usage and points to omnixy; deprecation timeline in docs.
-21. Release plan: tag first "omnixy preview"; announce migration path in README/CHANGELOG.
-22. homeManagerModules warning: either keep (document) or alias outputs to suppress.
-23. Cachix: docs for cache usage; optional CI vars (`CACHIX_CACHE_NAME`, `CACHIX_AUTH_TOKEN`).
-24. Flake templates: provide consumer NixOS/HM templates under `templates/`.
+25. VM test enhancements: add compositor/session readiness assertions for Hyprland/Waybar on Linux.
 
 ## Risks and Assumptions
 - Some Arch-era packages have no 1:1 nixpkgs mapping; repackaging or alternatives may be required.

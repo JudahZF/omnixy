@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+OS_ID=""
+OS_NAME=""
+if [[ -r /etc/os-release ]]; then
+  # shellcheck disable=SC1091
+  . /etc/os-release || true
+  OS_ID=${ID:-}
+  OS_NAME=${PRETTY_NAME:-${NAME:-}}
+fi
+
+is_arch=false
+is_nixos=false
+
+if command -v pacman >/dev/null 2>&1 || [[ "${OS_ID}" == "arch" ]]; then
+  is_arch=true
+fi
+if [[ "${OS_ID}" == "nixos" ]] || [[ "${OS_NAME,,}" == *"nixos"* ]]; then
+  is_nixos=true
+fi
+
+header() {
+  printf "\nOmarchy → Omnixy migration\n"
+  printf "--------------------------------\n\n"
+}
+
+arch_note() {
+  cat <<'EOF'
+Omarchy's Arch scripts are deprecated.
+This repo is now Nix-first. The supported interface is "omnixy" via Nix flakes.
+
+Next steps:
+- Migrate to NixOS or use Home Manager with flakes
+- Import Omnixy modules/overlays as described in the README
+
+Docs:
+- README section: "Omnixy (Nix) Usage"
+- README section: "NixOS Install"
+EOF
+}
+
+nixos_note() {
+  cat <<'EOF'
+You're on NixOS. Use the Omnixy Nix interface.
+
+Quick start (flake):
+- Add input: omnixy.url = "github:your/repo"
+- NixOS: modules = [ inputs.omnixy.nixosModules.default { omnixy.enable = true; } ]
+- Home Manager: imports = [ inputs.omnixy.homeManagerModules.default { omnixy.enable = true; } ]
+
+See README for details.
+EOF
+}
+
+header
+if $is_arch; then
+  arch_note
+  exit 0
+fi
+if $is_nixos; then
+  nixos_note
+  exit 0
+fi
+
+cat <<EOF
+Unable to determine your OS (found: "${OS_NAME:-unknown}").
+Omnixy is the Nix interface for this project. See README for usage.
+EOF

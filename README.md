@@ -4,17 +4,75 @@ Turn a fresh Arch installation into a fully-configured, beautiful, and modern we
 
 Read more at [omarchy.org](https://omarchy.org).
 
+Note: Omnixy targets Linux/NixOS only.
+
 ### Import and Override in your flake
 - Add input: `omnixy.url = "github:your/repo"` (or local `path:../..`).
 - NixOS: `modules = [ inputs.omnixy.nixosModules.default { omnixy.enable = true; omnixy.username = "me"; } ];`
 - Home Manager: `imports = [ inputs.omnixy.homeManagerModules.default { omnixy.enable = true; omnixy.desktop.enable = true; } ];`
 - Overlay: `nixpkgs.overlays = [ inputs.omnixy.overlays.default ];`
 
+### Release Plan (Preview)
+- v0.1.0-preview: Nix-first modules (NixOS + HM), `omnixy-scripts` packaging, overlay, CI checks green.
+- Known gaps: optional third‑party packaging, VM compositor assertions, templates.
+- Deprecation: Arch scripts frozen; use Omnixy via flakes going forward.
+
+### Cachix (optional)
+- CI supports Cachix if you set repository variables/secrets:
+  - `CACHIX_CACHE_NAME` (Actions variable)
+  - `CACHIX_AUTH_TOKEN` (Actions secret)
+- The step is already present in `.github/workflows/nix.yml` and can be enabled by uncommenting.
+
+### Migration Path
+- Add Omnixy as a flake input and import the NixOS/HM modules.
+- Set `omnixy.enable = true;` and your `omnixy.username` (and `omnixy.login.greetd.enable = true` for a graphical login).
+- Optional: enable `omnixy.tailscale` and configure secrets with `sops-nix`.
+
 ### Examples
 - Home Manager: see `examples/hm/flake.nix` (links dotfiles and theme config).
 - NixOS: see `examples/nixos/flake.nix` (minimal evaluable demo).
 
+### NixOS Install
+
+Option A — nixos-install (on the target):
+1) Boot the official NixOS 24.05 (or newer) installer ISO.
+2) Partition/format your disks and mount the target root at `/mnt` (and `/mnt/boot`, etc.).
+3) Generate hardware config: `nixos-generate-config --root /mnt`.
+4) Use a consumer flake that imports Omnixy (see Examples). Minimal host module:
+   ```nix
+   { inputs, ... }: {
+     imports = [ inputs.omnixy.nixosModules.default ];
+     omnixy.enable = true;
+     omnixy.username = "me";
+     # Enable graphical login to Hyprland if desired
+     omnixy.login.greetd.enable = true;
+     networking.hostName = "myhost";
+     system.stateVersion = "24.05";
+   }
+   ```
+5) Install using a flake reference (local path or remote):
+   - Local path (repo cloned in the installer): `nixos-install --no-root-password --flake /mnt/etc/nixos#myhost`
+   - Remote flake: `nixos-install --no-root-password --flake github:your/repo#myhost`
+6) Reboot and log in. Override any defaults in your host config as needed.
+
+Option B — nixos-anywhere (from a control machine):
+- Requires SSH access to the target (can be the installer ISO) and a consumer flake.
+- Example:
+  ```bash
+  nix run github:numtide/nixos-anywhere -- \
+    --flake github:your/repo#myhost \
+    root@TARGET_IP
+  ```
+- Tips: add `--build-on-remote` for low-powered controllers; ensure your flake sets `omnixy.enable = true` and any secrets configuration if using `sops-nix`.
+
+Optional — Custom ISO profile:
+- You can build a bootable ISO from a NixOS module stack that imports Omnixy using tools like `nixos-generators`.
+- Example (from your flake): `nix run github:nix-community/nixos-generators -- --format iso --flake .#myhost`.
+- This is optional; `nixos-install` and `nixos-anywhere` are the primary paths.
+
 ## Omnixy (Nix) Usage
+
+Note: Nix may warn `unknown flake output 'homeManagerModules'` during checks; this is benign and can be ignored.
 
 - Example files live under `secrets/`:
   - `secrets/secrets.example.yaml`: copy to `secrets/secrets.yaml` and encrypt with `sops`.
@@ -40,6 +98,13 @@ Encrypting
   - `omnixy.tailscale.secret.key = "example.tailscaleAuthKey";`
 - Option B: wire directly
   - `services.tailscale.authKeyFile = config.sops.secrets."tailscale-auth-key".path;`
+
+## Deprecation (Arch)
+
+- Omarchy’s Arch-era scripts are frozen and considered deprecated.
+- New features land in the Nix-first interface (“Omnixy”).
+- A backcompat CLI shim `omarchy` now detects Arch and points to Omnixy usage.
+- Migration path: adopt the Omnixy modules/overlays via flakes; see sections above.
 
 ## License
 

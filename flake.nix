@@ -3,6 +3,8 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
+
     home-manager.url = "github:nix-community/home-manager/release-24.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
@@ -10,13 +12,11 @@
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, nixpkgs, home-manager, ... }:
+  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, ... }:
     let
       systems = [
         "x86_64-linux"
         "aarch64-linux"
-        "x86_64-darwin"
-        "aarch64-darwin"
       ];
       forAllSystems = f: nixpkgs.lib.genAttrs systems (system: f system);
     in rec {
@@ -33,7 +33,7 @@
 
       # Optional overlay (stub for now; extended as packages are added)
       overlays = {
-        default = import ./nix/overlays/default.nix;
+        default = import ./nix/overlays/default.nix { nixpkgs-unstable = nixpkgs-unstable; };
       };
 
       # Expose packages attrset per system
@@ -76,12 +76,31 @@
       };
 
       # Checks build the example configs (override precedence validated by evaluation/build)
-      checks = forAllSystems (system:
-        let pkgs = import nixpkgs { inherit system; overlays = [ overlays.default ]; };
-        in {
-          flake-evaluates = pkgs.runCommand "omnixy-flake-evaluates" {} "mkdir -p $out";
-          consumer-home = if system == "x86_64-linux" then homeConfigurations."demo@localhost".activationPackage else pkgs.runCommand "skip-home-example" {} "mkdir -p $out";
-        }
-      );
-    };
-}
+       checks = forAllSystems (system:
+         let pkgs = import nixpkgs { inherit system; overlays = [ overlays.default ]; };
+         in {
+           flake-evaluates = pkgs.runCommand "omnixy-flake-evaluates" {} "mkdir -p $out";
+           consumer-home = if system == "x86_64-linux" then homeConfigurations."demo@localhost".activationPackage else pkgs.runCommand "skip-home-example" {} "mkdir -p $out";
+           vm-hyprland =
+             let testFile = "${toString ./.}/nix/tests/omnixy-hyprland.nix"; in
+             if (builtins.elem system [ "x86_64-linux" "aarch64-linux" ]) && (builtins.pathExists testFile) then
+               nixpkgs.lib.nixos.runTest {
+                 hostPkgs = pkgs;
+                 imports = [ (builtins.toPath testFile) ];
+               }
+             else pkgs.runCommand "skip-vm-test" {} "mkdir -p $out";
+         }
+       );
+
+       templates = {
+         nixos = {
+           path = ./examples/nixos;
+           description = "NixOS consumer flake using Omnixy";
+         };
+         home-manager = {
+           path = ./examples/hm;
+           description = "Home Manager consumer flake using Omnixy";
+         };
+       };
+     };
+ }
