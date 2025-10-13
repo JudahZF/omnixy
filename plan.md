@@ -106,14 +106,15 @@ Completed
 20. `homeManagerModules` warning: documented as benign in README
 21. Cachix: README docs and optional CI variables noted; step scaffolded in workflow
 
-Pending
 22. Config porting: add HM links for fcitx5, fontconfig, xournalpp, fastfetch, lazygit, backgrounds/wallpaper, Waybar assets
 23. NVIDIA guide: document PRIME bus IDs, sync mode, multi-monitor notes
 24. Module docs: generate option reference via `nixosOptionsDoc` in flake checks
 25. Formatting: add `alejandra`/`nixfmt` lint to CI
-26. Templates: expose `templates` via flake (done) and add README pointers (tighten)
 27. Packaging decision: either rely on unstable overlay or package local derivations for `walker`/`wl-screenrec`
-28. First release: tag v0.1.0-preview; finalize CHANGELOG and migration notes
+
+Pending
+26. Templates: expose `templates` via flake (done) and add README pointers (tighten)
+28. First release: tag v0.1.0-preview; finalize CHANGELOG and migration notes (CHANGELOG done; tag pending)
 
 ## Risks and Assumptions
 - Some Arch-era packages have no 1:1 nixpkgs mapping; repackaging or alternatives may be required
