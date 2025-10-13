@@ -99,10 +99,14 @@
         nixosEval = lib.evalModules {
           modules = [./nix/modules/nixos/omnixy.nix];
         };
-        nixosOptionsMd = if (lib ? nixosOptionsDoc) then lib.nixosOptionsDoc {
-          inherit (nixosEval) options;
-          transformOptions = opt: opt;
-        } else null;
+        nixosOptionsMd =
+          if (lib ? nixosOptionsDoc)
+          then
+            lib.nixosOptionsDoc {
+              inherit (nixosEval) options;
+              transformOptions = opt: opt;
+            }
+          else null;
       in {
         flake-evaluates = pkgs.runCommand "omnixy-flake-evaluates" {} "mkdir -p $out";
         consumer-home =
@@ -113,10 +117,14 @@
         vm-hyprland = pkgs.runCommand "skip-vm-test" {} "mkdir -p $out";
 
         # Export the generated options markdown as a check artifact (skipped if unavailable)
-        nixos-options-doc = if nixosOptionsMd != null then pkgs.runCommand "omnixy-nixos-options-doc" {} ''
-          mkdir -p $out
-          cp ${nixosOptionsMd.optionsMarkdown} $out/omnixy-nixos-options.md
-        '' else pkgs.runCommand "skip-options-doc" {} "mkdir -p $out";
+        nixos-options-doc =
+          if nixosOptionsMd != null
+          then
+            pkgs.runCommand "omnixy-nixos-options-doc" {} ''
+              mkdir -p $out
+              cp ${nixosOptionsMd.optionsMarkdown} $out/omnixy-nixos-options.md
+            ''
+          else pkgs.runCommand "skip-options-doc" {} "mkdir -p $out";
       }
     );
 
