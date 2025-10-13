@@ -22,6 +22,24 @@ in {
       "starship.toml".source = ../../../config/starship.toml;
       "brave-flags.conf".source = ../../../config/brave-flags.conf;
       "chromium-flags.conf".source = ../../../config/chromium-flags.conf;
+
+      # Input Method Editor
+      "fcitx5".source = ../../../config/fcitx5;
+      "fcitx5".recursive = true;
+
+      # Fontconfig rules
+      "fontconfig".source = ../../../config/fontconfig;
+      "fontconfig".recursive = true;
+
+      # App configs
+      "xournalpp".source = ../../../config/xournalpp;
+      "xournalpp".recursive = true;
+
+      "fastfetch".source = ../../../config/fastfetch;
+      "fastfetch".recursive = true;
+
+      "lazygit".source = ../../../config/lazygit;
+      "lazygit".recursive = true;
     };
   };
 }

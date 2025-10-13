@@ -16,6 +16,11 @@ let
 
   has = file: builtins.pathExists (themeDir + "/" + file);
 
+  backgroundsDir = themeDir + "/backgrounds";
+  hasBackgrounds = builtins.pathExists backgroundsDir;
+  wallpaperFiles = if hasBackgrounds then builtins.attrNames (builtins.readDir backgroundsDir) else [ ];
+  defaultWallpaper = if builtins.length wallpaperFiles > 0 then backgroundsDir + "/" + builtins.elemAt wallpaperFiles 0 else null;
+
 in {
   options.omnixy = {
     desktop.enable = mkEnableOption "Enable omnixy desktop dotfiles (Hyprland, Waybar, etc.)" // { default = true; };
@@ -65,10 +70,42 @@ in {
       // (if has "neovim.lua" then { "nvim/lua/omnixy/theme.lua".source = themeDir + "/neovim.lua"; } else {})
       # VSCode settings (optional)
       // (if has "vscode.json" then { "vscode/settings.json".source = themeDir + "/vscode.json"; } else {})
+      // (if has "backgrounds" then { "backgrounds/${cfg.theme}".source = themeDir + "/backgrounds"; "backgrounds/${cfg.theme}".recursive = true; } else {})
     );
 
     # Common programs toggles for desktop
     programs.waybar.enable = mkDefault true;
     services.mako.enable = mkDefault true;
+
+    # Waybar assets and defaults
+    xdg.dataFile = {
+      "omarchy/default/hypr".source = ../../../default/hypr;
+      "omarchy/default/hypr".recursive = true;
+      "omarchy/default/waybar".source = ../../../default/waybar;
+      "omarchy/default/waybar".recursive = true;
+      # Custom glyph font for Omarchy icon in Waybar
+      "fonts/omarchy.ttf".source = ../../../config/omarchy.ttf;
+    };
+
+    # Ensure per-user fontconfig, so the custom font is recognized
+    fonts.fontconfig.enable = mkDefault true;
+
+    # Provide OMARCHY_PATH for Waybar scripts
+    home.sessionVariables.OMARCHY_PATH = "$XDG_DATA_HOME/omarchy";
+
+    systemd.user.services.omnixy-wallpaper = mkIf (defaultWallpaper != null) {
+      Unit = {
+        Description = "Set wallpaper with swaybg";
+        After = [ "graphical-session.target" ];
+        PartOf = [ "graphical-session.target" ];
+      };
+      Service = {
+        ExecStart = "${pkgs.swaybg}/bin/swaybg -i ${defaultWallpaper} -m fill";
+        Restart = "on-failure";
+      };
+      Install = {
+        WantedBy = [ "graphical-session.target" ];
+      };
+    };
   };
 }

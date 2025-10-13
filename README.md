@@ -17,6 +17,10 @@ Note: Omnixy targets Linux/NixOS only.
 - Known gaps: optional third‑party packaging, VM compositor assertions, templates.
 - Deprecation: Arch scripts frozen; use Omnixy via flakes going forward.
 
+### Packaging Notes
+- `walker` and `wl-screenrec`: Omnixy overlays fall back to `nixpkgs-unstable` if these packages are missing in the pinned stable channel. This keeps configs working without adding local derivations.
+- If you already import an unstable overlay, you can drop Omnixy’s overlay or keep it — attribute resolution prefers your existing packages.
+
 ### Cachix (optional)
 - CI supports Cachix if you set repository variables/secrets:
   - `CACHIX_CACHE_NAME` (Actions variable)
@@ -105,6 +109,56 @@ Encrypting
 - New features land in the Nix-first interface (“Omnixy”).
 - A backcompat CLI shim `omarchy` now detects Arch and points to Omnixy usage.
 - Migration path: adopt the Omnixy modules/overlays via flakes; see sections above.
+
+## NVIDIA Hybrid (PRIME)
+
+This guide helps configure NVIDIA hybrid (Optimus) laptops with PRIME and Hyprland.
+
+1) Enable the preset in your NixOS host module:
+```nix
+{ inputs, ... }: {
+  imports = [ inputs.omnixy.nixosModules.default ];
+  omnixy.enable = true;
+
+  # Enable NVIDIA hybrid (Optimus) support
+  omnixy.hardware.nvidiaHybrid.enable = true;
+
+  # Required: set your bus IDs (see next section)
+  omnixy.hardware.nvidiaHybrid.intelBusId = "PCI:0:2:0";   # example
+  omnixy.hardware.nvidiaHybrid.nvidiaBusId = "PCI:1:0:0";  # example
+
+  # Optional: PRIME sync (reduces tearing); enabled by default
+  # omnixy.hardware.nvidiaHybrid.sync.enable = true;
+
+  # Optional: use NVIDIA open kernel module (supported GPUs only)
+  # omnixy.hardware.nvidiaHybrid.open = true;
+}
+```
+
+2) Find your bus IDs
+- List GPUs: `lspci | rg -i "(vga|3d|display)"`
+- Typical output shows something like:
+  - Intel iGPU: `00:02.0 VGA compatible controller: Intel ...`
+  - NVIDIA dGPU: `01:00.0 3D controller: NVIDIA ...`
+- Convert to Nix format `PCI:<bus>:<device>:<function>`:
+  - `00:02.0` → `PCI:0:2:0`
+  - `01:00.0` → `PCI:1:0:0`
+
+3) Multi‑monitor notes
+- PRIME sync is recommended for smoother multi‑monitor setups; it is enabled by default.
+- Configure layouts in Hyprland via `~/.config/hypr/monitors.conf` as usual.
+- If you hit oddities (blank or flickering external display), try temporarily disabling sync:
+  - `omnixy.hardware.nvidiaHybrid.sync.enable = false;`
+
+4) Verify
+- NVIDIA driver loaded: `nvidia-smi` (should show your GPU)
+- PRIME configured: `journalctl -b | rg -i prime`
+- Wayland monitors: `hyprctl monitors`
+- GL/Vulkan device: `glxinfo -B | rg Device` or `vulkaninfo | rg -m1 "GPU id|deviceName"`
+
+Notes
+- The preset wires Intel and NVIDIA stacks and sets PRIME according to your IDs. It uses `hardware.graphics` and `hardware.nvidia.*` under the hood.
+- The “open” NVIDIA kernel module may not support all GPUs/features; leave it off if unsure.
 
 ## License
 

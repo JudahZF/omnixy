@@ -75,9 +75,21 @@
         };
       };
 
-      # Checks build the example configs (override precedence validated by evaluation/build)
+       # Checks build the example configs (override precedence validated by evaluation/build)
        checks = forAllSystems (system:
-         let pkgs = import nixpkgs { inherit system; overlays = [ overlays.default ]; };
+         let
+           pkgs = import nixpkgs { inherit system; overlays = [ overlays.default ]; };
+           lib = nixpkgs.lib;
+
+           # Generate options doc for NixOS module
+           nixosEval = lib.evalModules {
+             modules = [ ./nix/modules/nixos/omnixy.nix ];
+           };
+           nixosOptionsMd = lib.nixosOptionsDoc {
+             inherit (nixosEval) options;
+             transformOptions = opt: opt;
+           };
+
          in {
            flake-evaluates = pkgs.runCommand "omnixy-flake-evaluates" {} "mkdir -p $out";
            consumer-home = if system == "x86_64-linux" then homeConfigurations."demo@localhost".activationPackage else pkgs.runCommand "skip-home-example" {} "mkdir -p $out";
@@ -89,6 +101,12 @@
                  imports = [ (builtins.toPath testFile) ];
                }
              else pkgs.runCommand "skip-vm-test" {} "mkdir -p $out";
+
+           # Export the generated options markdown as a check artifact
+           nixos-options-doc = pkgs.runCommand "omnixy-nixos-options-doc" {} ''
+             mkdir -p $out
+             cp ${nixosOptionsMd.optionsMarkdown} $out/omnixy-nixos-options.md
+           '';
          }
        );
 
