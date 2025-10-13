@@ -20,6 +20,7 @@
           networking.hostName = "omnixy-example";
           omnixy.enable = true;
           omnixy.username = "demo";
+          omnixy.login.greetd.enable = true;
           users.users.demo.isNormalUser = true;
           # Minimal boot/filesystems for evaluation only
           boot.loader.grub.devices = ["nodev"];

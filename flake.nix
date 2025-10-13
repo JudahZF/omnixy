@@ -113,8 +113,11 @@
           if system == "x86_64-linux"
           then homeConfigurations."demo@localhost".activationPackage
           else pkgs.runCommand "skip-home-example" {} "mkdir -p $out";
-        # VM-based compositor test is optional; skipped by default to keep CI light and avoid flakes
-        vm-hyprland = pkgs.runCommand "skip-vm-test" {} "mkdir -p $out";
+        # VM-based compositor test for Hyprland session (guarded to x86_64-linux)
+        vm-hyprland =
+          if system == "x86_64-linux"
+          then import ./nix/tests/omnixy-hyprland.nix { inherit pkgs lib; }
+          else pkgs.runCommand "skip-vm-test" {} "mkdir -p $out";
 
         # Export the generated options markdown as a check artifact (skipped if unavailable)
         nixos-options-doc =

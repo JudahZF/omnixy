@@ -1,0 +1,41 @@
+* {
+  background-image: none;
+  font-family: "JetBrainsMono Nerd Font", "FiraCode Nerd Font", monospace;
+  font-size: 14px;
+}
+
+window {
+  background-color: rgba(30, 30, 46, 0.9);
+}
+
+button {
+  color: #cdd6f4;
+  background-color: rgba(49, 50, 68, 0.8);
+  border: 1px solid rgba(108, 112, 134, 0.5);
+  border-radius: 8px;
+  padding: 12px 18px;
+  margin: 8px;
+}
+
+button:hover {
+  background-color: rgba(88, 91, 112, 0.9);
+}
+
+#lock {
+  color: #89b4fa;
+}
+#logout {
+  color: #94e2d5;
+}
+#suspend {
+  color: #f9e2af;
+}
+#hibernate {
+  color: #f5c2e7;
+}
+#reboot {
+  color: #74c7ec;
+}
+#shutdown {
+  color: #f38ba8;
+}

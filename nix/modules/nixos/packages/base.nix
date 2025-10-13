@@ -39,7 +39,7 @@
       fastfetch
       fcitx5
       fcitx5-gtk
-      # fcitx5-qt Doesn't exist in nixpkgs
+      # fcitx5-qt (added if available)
       fd
       ffmpegthumbnailer
       fontconfig
@@ -63,7 +63,7 @@
       iwd
       jq
       kdePackages.kdenlive
-      # libsForQt5.qtstyleplugin-kvantum5 Can't find ??
+      # Kvantum Qt style plugin (added if available)
       kitty
       lazydocker
       lazygit
@@ -108,7 +108,7 @@
       sushi
       swaybg
       swayosd
-      # tuigreet <-- Not found
+      # tuigreet is provided by omnixy.login.greetd (tuigreet)
       system-config-printer
       tldr
       tree-sitter
@@ -132,7 +132,11 @@
     ++ lib.optional (pkgs ? wl-clip-persist) pkgs.wl-clip-persist
     ++ lib.optional (pkgs ? wl-screenrec) pkgs.wl-screenrec
     ++ lib.optional (pkgs ? ghostty) pkgs.ghostty
-    ++ lib.optional (pkgs ? polkit_gnome) pkgs.polkit_gnome;
+    ++ lib.optional (pkgs ? polkit_gnome) pkgs.polkit_gnome
+    ++ lib.optional (pkgs ? fcitx5-qt) pkgs.fcitx5-qt
+    ++ lib.optional (pkgs ? kvantum) pkgs.kvantum
+    ++ lib.optional (pkgs ? libsForQt5 && pkgs.libsForQt5 ? qtstyleplugin-kvantum) pkgs.libsForQt5.qtstyleplugin-kvantum
+    ++ lib.optional (pkgs ? qt6Packages && pkgs.qt6Packages ? qtstyleplugin-kvantum) pkgs.qt6Packages.qtstyleplugin-kvantum;
 
   unfreePackages = [
     pkgs."1password-cli"

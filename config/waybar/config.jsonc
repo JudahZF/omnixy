@@ -12,7 +12,8 @@
     "network",
     "pulseaudio",
     "cpu",
-    "battery"
+    "battery",
+    "custom/power"
   ],
   "hyprland/workspaces": {
     "on-click": "activate",
@@ -134,5 +135,10 @@
   "tray": {
     "icon-size": 12,
     "spacing": 12
+  },
+  "custom/power": {
+    "format": "",
+    "tooltip-format": "Power menu",
+    "on-click": "wlogout -p layer-shell"
   }
 }

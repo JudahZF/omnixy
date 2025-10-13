@@ -28,7 +28,11 @@
         omnixy.homeManagerModules.default
         {
           omnixy.enable = true;
-          omnixy.desktop.enable = true;
+          omnixy.desktop.enable = true; # includes Hyprland/Waybar/Mako and wlogout power menu
+
+          # Optional: link Omnixy-managed dotfiles (starship, browser flags, etc.)
+          omnixy.files.enable = true;
+
           home.username = "me"; # change to your user
           home.homeDirectory = "/home/me";
           home.stateVersion = "24.05";

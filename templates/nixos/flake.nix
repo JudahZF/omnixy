@@ -26,7 +26,24 @@
         {
           omnixy.enable = true;
           omnixy.username = "me"; # change to your user
-          omnixy.login.greetd.enable = true; # enable graphical login
+
+          # Login UI → Hyprland via greetd/tuigreet
+          omnixy.login.greetd.enable = true;
+
+          # Simple firewall (wraps networking.firewall)
+          omnixy.firewall = {
+            enable = true;
+            allowedTCPPorts = [];
+            allowedUDPPorts = [];
+          };
+
+          # Printing: enable CUPS; toggle virtual PDF printer if desired
+          omnixy.printing = {
+            enable = true;
+            pdf.enable = false; # set to true for a virtual PDF printer
+            drivers = [ ]; # e.g., pkgs.hplip pkgs.gutenprint
+          };
+
           networking.hostName = "myhost";
           system.stateVersion = "24.05";
         }

@@ -69,6 +69,18 @@ in {
         "waybar/config.jsonc".source = ../../../config/waybar/config.jsonc;
         "waybar/style.css".source = themeDir + "/waybar.css";
       }
+      # wlogout: layout and style (theme override if provided)
+      // (
+        if has "wlogout"
+        then {
+          "wlogout/layout".source = themeDir + "/wlogout/layout";
+          "wlogout/style.css".source = themeDir + "/wlogout/style.css";
+        }
+        else {
+          "wlogout/layout".source = ../../../config/wlogout/layout;
+          "wlogout/style.css".source = ../../../config/wlogout/style.css;
+        }
+      )
       # Mako notifications
       // (
         if has "mako.ini"
@@ -136,6 +148,9 @@ in {
         else {}
       )
     );
+
+    # Ensure wlogout is available for logout UI
+    home.packages = (home.packages or []) ++ [ pkgs.wlogout ];
 
     # Common programs toggles for desktop
     programs.waybar.enable = mkDefault true;

@@ -15,6 +15,7 @@ in {
     ./greetd.nix
     ./printing.nix
     ./portals.nix
+    ./firewall.nix
     ./hardware
     ./secrets.nix
     ./tailscale.nix

@@ -1,5 +1,25 @@
 # Changelog
 
+## v0.1.1-preview — 2025-10-13
+
+### Highlights
+- Logout/Login UX: wlogout power menu (Waybar button + SUPER+SHIFT+E), greetd→tuigreet login to Hyprland.
+- New NixOS modules: simple firewall wrapper and CUPS-PDF toggle.
+- Hyprland VM test added to flake checks (`vm-hyprland`).
+- Templates and README expanded for login/logout, firewall, printing.
+- Package gaps closed: optional `fcitx5-qt`, Kvantum (Qt5/Qt6) where available.
+
+### Changes
+- HM desktop now links `config/wlogout/{layout,style.css}` and installs `wlogout`.
+- Waybar config adds a power button; Hyprland bindings add `SUPER+SHIFT+E` to open wlogout.
+- `omnixy.firewall` module wraps `networking.firewall` with allowed ports.
+- `omnixy.printing.pdf.enable` toggles virtual PDF printer (`cups-pdf`).
+- Flake check `vm-hyprland` validates compositor session in a VM.
+- Templates updated; README documents new options and flows.
+- Base packages conditionally include `fcitx5-qt` and Kvantum plugins when available.
+
+---
+
 ## v0.1.0-preview — 2025-10-13
 
 ### Highlights

@@ -9,7 +9,7 @@ Note: Omnixy targets Linux/NixOS only.
 ### Import and Override in your flake
 - Add input: `omnixy.url = "github:JudahZF/omnixy"` (or local `path:../..`).
 - NixOS: `modules = [ inputs.omnixy.nixosModules.default { omnixy.enable = true; omnixy.username = "me"; } ];`
-- Home Manager: `imports = [ inputs.omnixy.homeManagerModules.default { omnixy.enable = true; omnixy.desktop.enable = true; } ];`
+- Home Manager: `imports = [ inputs.omnixy.homeManagerModules.default { omnixy.enable = true; omnixy.desktop.enable = true; } ];` (includes wlogout power menu and Waybar integration)
 - Overlay: `nixpkgs.overlays = [ inputs.omnixy.overlays.default ];`
 
 ### Release Plan (Preview)
@@ -29,12 +29,12 @@ Note: Omnixy targets Linux/NixOS only.
 
 ### Migration Path
 - Add Omnixy as a flake input and import the NixOS/HM modules.
-- Set `omnixy.enable = true;` and your `omnixy.username` (and `omnixy.login.greetd.enable = true` for a graphical login).
+- Set `omnixy.enable = true;` and your `omnixy.username` (and `omnixy.login.greetd.enable = true` for a graphical login to Hyprland via tuigreet).
 - Optional: enable `omnixy.tailscale` and configure secrets with `sops-nix`.
 
 ### Examples
-- Home Manager: see `examples/hm/flake.nix` (links dotfiles and theme config).
-- NixOS: see `examples/nixos/flake.nix` (minimal evaluable demo).
+- Home Manager: see `examples/hm/flake.nix` (links dotfiles and theme config; includes wlogout power menu).
+- NixOS: see `examples/nixos/flake.nix` (minimal evaluable demo; greetd → Hyprland login). For a VM compositor check, run: `nix build .#checks.x86_64-linux.vm-hyprland`
 
 ### Templates
 - Init from GitHub:
@@ -87,15 +87,20 @@ Optional — Custom ISO profile:
 
 Note: Nix may warn `unknown flake output 'homeManagerModules'` during checks; this is benign and can be ignored.
 
-- Example files live under `secrets/`:
-  - `secrets/secrets.example.yaml`: copy to `secrets/secrets.yaml` and encrypt with `sops`.
-  - `secrets/.sops.yaml.example`: copy to repo root as `.sops.yaml` and set your `age` recipients.
-- Enable sops-nix and point to the file:
-  - In your NixOS config that imports `omnixy`:
-    - `omnixy.secrets.enable = true;`
-    - `omnixy.secrets.defaultSopsFile = ./secrets/secrets.yaml;`
-  - Define concrete secrets using keys inside the YAML:
-    - `sops.secrets."tailscale-auth-key" = { sopsFile = ./secrets/secrets.yaml; key = "example.tailscaleAuthKey"; };`
+- Login UI: set `omnixy.login.greetd.enable = true;` to use greetd/tuigreet launching Hyprland.
+- Logout UI: Home Manager desktop includes `wlogout`; Waybar adds a power button; Hyprland binds `SUPER+SHIFT+E`.
+- Firewall: configure `omnixy.firewall.{allowedTCPPorts,allowedUDPPorts}`; `enable` defaults to true.
+- Printing: enable CUPS by default; `omnixy.printing.pdf.enable = true;` adds a virtual PDF printer.
+- Secrets:
+  - Example files live under `secrets/`:
+    - `secrets/secrets.example.yaml`: copy to `secrets/secrets.yaml` and encrypt with `sops`.
+    - `secrets/.sops.yaml.example`: copy to repo root as `.sops.yaml` and set your `age` recipients.
+  - Enable sops-nix and point to the file:
+    - In your NixOS config that imports `omnixy`:
+      - `omnixy.secrets.enable = true;`
+      - `omnixy.secrets.defaultSopsFile = ./secrets/secrets.yaml;`
+    - Define concrete secrets using keys inside the YAML:
+      - `sops.secrets."tailscale-auth-key" = { sopsFile = ./secrets/secrets.yaml; key = "example.tailscaleAuthKey"; };`
 
 Encrypting
 - Generate an age key: `age-keygen -o age.key` and record the public key (starts with `age1...`).

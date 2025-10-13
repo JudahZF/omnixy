@@ -1,0 +1,8 @@
+# wlogout layout file
+# Each line: <label> <cmd> <key> [text]
+lock swaylock -f l Lock
+logout hyprctl dispatch exit   e Logout
+suspend systemctl suspend      s Sleep
+hibernate systemctl hibernate  h Hibernate
+reboot systemctl reboot        r Reboot
+shutdown systemctl poweroff    p Power Off
