@@ -116,7 +116,7 @@
         # VM-based compositor test for Hyprland session (guarded to x86_64-linux)
         vm-hyprland =
           if system == "x86_64-linux"
-          then import ./nix/tests/omnixy-hyprland.nix { inherit pkgs lib; }
+          then import ./nix/tests/omnixy-hyprland.nix {inherit pkgs lib;}
           else pkgs.runCommand "skip-vm-test" {} "mkdir -p $out";
 
         # Export the generated options markdown as a check artifact (skipped if unavailable)

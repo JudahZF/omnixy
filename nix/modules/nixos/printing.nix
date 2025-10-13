@@ -9,7 +9,7 @@ in {
   options.omnixy.printing = {
     enable = mkEnableOption "Printing via CUPS and Avahi" // {default = true;};
 
-    pdf.enable = mkEnableOption "Enable virtual CUPS-PDF printer" // { default = false; };
+    pdf.enable = mkEnableOption "Enable virtual CUPS-PDF printer" // {default = false;};
 
     drivers = mkOption {
       type = types.listOf types.package;

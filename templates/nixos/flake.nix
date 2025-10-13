@@ -41,7 +41,7 @@
           omnixy.printing = {
             enable = true;
             pdf.enable = false; # set to true for a virtual PDF printer
-            drivers = [ ]; # e.g., pkgs.hplip pkgs.gutenprint
+            drivers = []; # e.g., pkgs.hplip pkgs.gutenprint
           };
 
           networking.hostName = "myhost";

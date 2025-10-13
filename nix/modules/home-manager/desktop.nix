@@ -150,7 +150,7 @@ in {
     );
 
     # Ensure wlogout is available for logout UI
-    home.packages = (home.packages or []) ++ [ pkgs.wlogout ];
+    home.packages = (home.packages or []) ++ [pkgs.wlogout];
 
     # Common programs toggles for desktop
     programs.waybar.enable = mkDefault true;
