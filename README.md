@@ -36,6 +36,15 @@ Note: Omnixy targets Linux/NixOS only.
 - Home Manager: see `examples/hm/flake.nix` (links dotfiles and theme config).
 - NixOS: see `examples/nixos/flake.nix` (minimal evaluable demo).
 
+### Templates
+- Init from GitHub:
+  - NixOS: `nix flake init -t github:JudahZF/omnixy#nixos`
+  - Home Manager: `nix flake init -t github:JudahZF/omnixy#home-manager`
+- Init from a local clone of this repo:
+  - NixOS: `nix flake init -t path:../..#nixos`
+  - Home Manager: `nix flake init -t path:../..#home-manager`
+- Inspect available templates: `nix flake show github:JudahZF/omnixy`
+
 ### NixOS Install
 
 Option A — nixos-install (on the target):

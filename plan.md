@@ -112,9 +112,9 @@ Completed
 25. Formatting: add `alejandra`/`nixfmt` lint to CI
 27. Packaging decision: either rely on unstable overlay or package local derivations for `walker`/`wl-screenrec`
 
-Pending
+Completed
 26. Templates: expose `templates` via flake (done) and add README pointers (tighten)
-28. First release: tag v0.1.0-preview; finalize CHANGELOG and migration notes (CHANGELOG done; tag pending)
+28. First release: tag v0.1.0-preview; finalize CHANGELOG and migration notes (tag created; CHANGELOG done)
 
 ## Risks and Assumptions
 - Some Arch-era packages have no 1:1 nixpkgs mapping; repackaging or alternatives may be required
