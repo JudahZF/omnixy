@@ -28,7 +28,7 @@
     else [];
   defaultWallpaper =
     if builtins.length wallpaperFiles > 0
-    then backgroundsDir + "/" + builtins.elemAt wallpaperFiles 0
+    then "${backgroundsDir}/${builtins.elemAt wallpaperFiles 0}"
     else null;
 in {
   options.omnixy = {
