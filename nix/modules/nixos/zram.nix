@@ -1,10 +1,13 @@
-{ config, lib, ... }:
-let
+{
+  config,
+  lib,
+  ...
+}: let
   inherit (lib) mkIf mkDefault mkEnableOption mkOption types;
   cfg = config.omnixy.zram;
 in {
   options.omnixy.zram = {
-    enable = mkEnableOption "Enable zram swap" // { default = true; };
+    enable = mkEnableOption "Enable zram swap" // {default = true;};
     memoryPercent = mkOption {
       type = types.int;
       default = 25;

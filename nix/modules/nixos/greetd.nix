@@ -1,5 +1,9 @@
-{ config, lib, pkgs, ... }:
-let
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
   inherit (lib) mkIf mkDefault mkEnableOption mkOption types;
   cfg = config.omnixy.login.greetd;
   user = config.omnixy.username or "omnixy";
@@ -18,17 +22,23 @@ in {
   config = mkIf cfg.enable {
     services.greetd = {
       enable = mkDefault true;
-      settings = {
-        default_session = {
-          command = mkDefault tuigreetCmd;
-          user = mkDefault user;
-        };
-      } // (if cfg.autologinUser != null then {
-        initial_session = {
-          command = hyprCmd;
-          user = cfg.autologinUser;
-        };
-      } else {});
+      settings =
+        {
+          default_session = {
+            command = mkDefault tuigreetCmd;
+            user = mkDefault user;
+          };
+        }
+        // (
+          if cfg.autologinUser != null
+          then {
+            initial_session = {
+              command = hyprCmd;
+              user = cfg.autologinUser;
+            };
+          }
+          else {}
+        );
     };
 
     # Ensure Hyprland is available as a session command

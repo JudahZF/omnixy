@@ -1,14 +1,17 @@
-{ config, lib, ... } @ args:
-let
+{
+  config,
+  lib,
+  ...
+} @ args: let
   inherit (lib) mkEnableOption mkIf mkDefault mkMerge mkOption types attrByPath;
   cfg = config.omnixy.tailscale;
   hasSops = args ? sops-nix;
-  secretPath = name: attrByPath [ "sops" "secrets" name "path" ] null config;
+  secretPath = name: attrByPath ["sops" "secrets" name "path"] null config;
 in {
   options.omnixy.tailscale = {
     enable = mkEnableOption "Enable Tailscale VPN";
 
-    useSecret = mkEnableOption "Use sops-nix managed secret for auth key" // { default = true; };
+    useSecret = mkEnableOption "Use sops-nix managed secret for auth key" // {default = true;};
 
     secret = {
       name = mkOption {
@@ -43,8 +46,11 @@ in {
 
     # Declare the secret via sops-secrets if requested and sops-nix is present
     # Wire the secret into Tailscale if present in config
-    (let p = secretPath cfg.secret.name; in mkIf (cfg.useSecret && p != null) {
-      services.tailscale.authKeyFile = p;
-    })
+    (let
+      p = secretPath cfg.secret.name;
+    in
+      mkIf (cfg.useSecret && p != null) {
+        services.tailscale.authKeyFile = p;
+      })
   ]);
 }

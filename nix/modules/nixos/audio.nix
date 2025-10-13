@@ -1,10 +1,14 @@
-{ config, lib, pkgs, ... }:
-let
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
   inherit (lib) mkIf mkDefault mkEnableOption;
   cfg = config.omnixy.audio;
 in {
   options.omnixy.audio = {
-    enable = mkEnableOption "PipeWire/WirePlumber audio stack" // { default = true; };
+    enable = mkEnableOption "PipeWire/WirePlumber audio stack" // {default = true;};
   };
 
   config = mkIf cfg.enable {

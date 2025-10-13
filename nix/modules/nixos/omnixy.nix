@@ -1,5 +1,9 @@
-{ config, lib, pkgs, ... }:
-let
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
   cfg = config.omnixy;
   inherit (lib) mkEnableOption mkOption mkIf mkDefault types;
 in {
@@ -36,12 +40,12 @@ in {
     users.users.${cfg.username} = {
       isNormalUser = mkDefault true;
       description = mkDefault "Omnixy User";
-      extraGroups = mkDefault [ "wheel" "networkmanager" ];
+      extraGroups = mkDefault ["wheel" "networkmanager"];
     };
 
-    nix.settings.experimental-features = mkDefault [ "nix-command" "flakes" ];
+    nix.settings.experimental-features = mkDefault ["nix-command" "flakes"];
 
     # Minimal, unobtrusive packages as defaults
-    environment.systemPackages = with pkgs; [ git ];
+    environment.systemPackages = with pkgs; [git];
   };
 }

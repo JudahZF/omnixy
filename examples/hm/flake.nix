@@ -9,9 +9,18 @@
     omnixy.url = "path:../..";
   };
 
-  outputs = { self, nixpkgs, home-manager, omnixy, ... }: {
+  outputs = {
+    self,
+    nixpkgs,
+    home-manager,
+    omnixy,
+    ...
+  }: {
     homeConfigurations."demo@localhost" = home-manager.lib.homeManagerConfiguration {
-      pkgs = import nixpkgs { system = "x86_64-linux"; overlays = [ omnixy.overlays.default ]; };
+      pkgs = import nixpkgs {
+        system = "x86_64-linux";
+        overlays = [omnixy.overlays.default];
+      };
       modules = [
         omnixy.homeManagerModules.default
         {

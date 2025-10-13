@@ -1,11 +1,14 @@
-{ config, lib, ... }:
-let
+{
+  config,
+  lib,
+  ...
+}: let
   inherit (lib) mkEnableOption mkDefault mkIf mkOption types;
   cfg = config.omnixy.hardware.nvidiaHybrid;
 in {
   options.omnixy.hardware.nvidiaHybrid = {
     enable = mkEnableOption "NVIDIA hybrid (Optimus) preset with PRIME sync";
-    sync.enable = mkEnableOption "Enable PRIME sync (recommended)" // { default = true; };
+    sync.enable = mkEnableOption "Enable PRIME sync (recommended)" // {default = true;};
     intelBusId = mkOption {
       type = types.nullOr types.str;
       default = null;
@@ -27,8 +30,13 @@ in {
     omnixy.graphics.nvidia.open = mkDefault cfg.open;
 
     hardware.nvidia.prime = mkIf (cfg.intelBusId != null && cfg.nvidiaBusId != null) ({
-      intelBusId = cfg.intelBusId;
-      nvidiaBusId = cfg.nvidiaBusId;
-    } // (if cfg.sync.enable then { sync.enable = true; } else {}));
+        intelBusId = cfg.intelBusId;
+        nvidiaBusId = cfg.nvidiaBusId;
+      }
+      // (
+        if cfg.sync.enable
+        then {sync.enable = true;}
+        else {}
+      ));
   };
 }

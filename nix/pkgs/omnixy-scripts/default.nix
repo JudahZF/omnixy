@@ -1,4 +1,7 @@
-{ stdenvNoCC, lib }:
+{
+  stdenvNoCC,
+  lib,
+}:
 stdenvNoCC.mkDerivation {
   pname = "omnixy-scripts";
   version = "0.1.0";

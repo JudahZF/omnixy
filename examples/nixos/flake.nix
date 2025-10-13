@@ -6,7 +6,12 @@
     omnixy.url = "path:../..";
   };
 
-  outputs = { self, nixpkgs, omnixy, ... }: {
+  outputs = {
+    self,
+    nixpkgs,
+    omnixy,
+    ...
+  }: {
     nixosConfigurations.example = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
@@ -17,8 +22,11 @@
           omnixy.username = "demo";
           users.users.demo.isNormalUser = true;
           # Minimal boot/filesystems for evaluation only
-          boot.loader.grub.devices = [ "nodev" ];
-          fileSystems."/" = { device = "nodev"; fsType = "tmpfs"; };
+          boot.loader.grub.devices = ["nodev"];
+          fileSystems."/" = {
+            device = "nodev";
+            fsType = "tmpfs";
+          };
           system.stateVersion = "24.05";
         }
       ];

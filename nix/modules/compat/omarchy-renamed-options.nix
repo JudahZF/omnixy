@@ -1,2 +1,2 @@
-{ lib, ... }:
-lib.mkRenamedOptionModule [ "omarchy" ] [ "omnixy" ]
+{lib, ...}:
+lib.mkRenamedOptionModule ["omarchy"] ["omnixy"]

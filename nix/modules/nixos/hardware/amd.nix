@@ -1,5 +1,8 @@
-{ config, lib, ... }:
-let
+{
+  config,
+  lib,
+  ...
+}: let
   inherit (lib) mkEnableOption mkDefault mkIf;
 in {
   options.omnixy.hardware.amd.enable = mkEnableOption "AMD graphics preset (VAAPI/VDPAU)";

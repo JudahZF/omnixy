@@ -1,5 +1,8 @@
-{ config, lib, ... } @ args:
-let
+{
+  config,
+  lib,
+  ...
+} @ args: let
   inherit (lib) mkEnableOption mkIf mkDefault mkOption types;
   cfg = config.omnixy.secrets;
   hasSops = false;
@@ -11,8 +14,6 @@ in {
       default = null;
     };
   };
-
-
 
   config = {};
 }

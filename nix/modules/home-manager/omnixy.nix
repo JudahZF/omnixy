@@ -1,5 +1,9 @@
-{ config, lib, pkgs, ... }:
-let
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
   cfg = config.omnixy;
   inherit (lib) mkEnableOption mkIf mkDefault;
 in {

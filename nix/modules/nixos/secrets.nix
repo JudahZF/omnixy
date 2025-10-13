@@ -1,5 +1,8 @@
-{ config, lib, ... } @ args:
-let
+{
+  config,
+  lib,
+  ...
+} @ args: let
   inherit (lib) mkEnableOption mkIf mkDefault mkOption types;
   cfg = config.omnixy.secrets;
   hasSops = false;
@@ -14,7 +17,7 @@ in {
     };
 
     age = {
-      generateKey = mkEnableOption "Generate age key on first boot" // { default = true; };
+      generateKey = mkEnableOption "Generate age key on first boot" // {default = true;};
       keyFile = mkOption {
         type = types.path;
         default = "/var/lib/sops-nix/key.txt";
@@ -22,8 +25,6 @@ in {
       };
     };
   };
-
-
 
   config = {};
 }

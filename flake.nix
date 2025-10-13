@@ -12,113 +12,131 @@
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, ... }:
-    let
-      systems = [
-        "x86_64-linux"
-        "aarch64-linux"
-      ];
-      forAllSystems = f: nixpkgs.lib.genAttrs systems (system: f system);
-    in rec {
-      # Importable modules with sensible, overrideable defaults
-      nixosModules = {
-        default = import ./nix/modules/nixos/omnixy.nix;
-        compat-omarchy = import ./nix/modules/compat/omarchy-renamed-options.nix;
-      };
+  outputs = {
+    self,
+    nixpkgs,
+    nixpkgs-unstable,
+    home-manager,
+    ...
+  }: let
+    systems = [
+      "x86_64-linux"
+      "aarch64-linux"
+    ];
+    forAllSystems = f: nixpkgs.lib.genAttrs systems (system: f system);
+  in rec {
+    # Importable modules with sensible, overrideable defaults
+    nixosModules = {
+      default = import ./nix/modules/nixos/omnixy.nix;
+      compat-omarchy = import ./nix/modules/compat/omarchy-renamed-options.nix;
+    };
 
-      homeManagerModules = {
-        default = import ./nix/modules/home-manager/omnixy.nix;
-        compat-omarchy = import ./nix/modules/compat/omarchy-renamed-options.nix;
-      };
+    homeManagerModules = {
+      default = import ./nix/modules/home-manager/omnixy.nix;
+      compat-omarchy = import ./nix/modules/compat/omarchy-renamed-options.nix;
+    };
 
-      # Optional overlay (stub for now; extended as packages are added)
-      overlays = {
-        default = import ./nix/overlays/default.nix { nixpkgs-unstable = nixpkgs-unstable; };
-      };
+    # Optional overlay (stub for now; extended as packages are added)
+    overlays = {
+      default = import ./nix/overlays/default.nix {nixpkgs-unstable = nixpkgs-unstable;};
+    };
 
-      # Expose packages attrset per system
-      packages = forAllSystems (system:
-        let pkgs = import nixpkgs { inherit system; overlays = [ self.overlays.default ]; };
-        in {
-          default = pkgs.callPackage ./nix/pkgs/omnixy-scripts {};
-          omnixy-scripts = pkgs.callPackage ./nix/pkgs/omnixy-scripts {};
-        }
-      );
-
-      # Dev shell for formatting and nix work
-      devShells = forAllSystems (system:
-        let pkgs = import nixpkgs { inherit system; };
-        in {
-          default = pkgs.mkShell {
-            packages = with pkgs; [ alejandra nixfmt-rfc-style ];
-          };
-        }
-      );
-
-
-
-      homeConfigurations = {
-        "demo@localhost" = home-manager.lib.homeManagerConfiguration {
-          pkgs = import nixpkgs { system = "x86_64-linux"; overlays = [ overlays.default ]; };
-          modules = [
-            homeManagerModules.default
-            {
-              omnixy.enable = true;
-              omnixy.files.enable = true;
-              omnixy.desktop.enable = true;
-              omnixy.theme = "gruvbox";
-              home.username = "demo";
-              home.homeDirectory = "/home/demo";
-              home.stateVersion = "24.05";
-            }
-          ];
+    # Expose packages attrset per system
+    packages = forAllSystems (
+      system: let
+        pkgs = import nixpkgs {
+          inherit system;
+          overlays = [self.overlays.default];
         };
+      in {
+        default = pkgs.callPackage ./nix/pkgs/omnixy-scripts {};
+        omnixy-scripts = pkgs.callPackage ./nix/pkgs/omnixy-scripts {};
+      }
+    );
+
+    # Dev shell for formatting and nix work
+    devShells = forAllSystems (
+      system: let
+        pkgs = import nixpkgs {inherit system;};
+      in {
+        default = pkgs.mkShell {
+          packages = with pkgs; [alejandra nixfmt-rfc-style];
+        };
+      }
+    );
+
+    homeConfigurations = {
+      "demo@localhost" = home-manager.lib.homeManagerConfiguration {
+        pkgs = import nixpkgs {
+          system = "x86_64-linux";
+          overlays = [overlays.default];
+        };
+        modules = [
+          homeManagerModules.default
+          {
+            omnixy.enable = true;
+            omnixy.files.enable = true;
+            omnixy.desktop.enable = true;
+            omnixy.theme = "gruvbox";
+            home.username = "demo";
+            home.homeDirectory = "/home/demo";
+            home.stateVersion = "24.05";
+          }
+        ];
       };
+    };
 
-       # Checks build the example configs (override precedence validated by evaluation/build)
-       checks = forAllSystems (system:
-         let
-           pkgs = import nixpkgs { inherit system; overlays = [ overlays.default ]; };
-           lib = nixpkgs.lib;
+    # Checks build the example configs (override precedence validated by evaluation/build)
+    checks = forAllSystems (
+      system: let
+        pkgs = import nixpkgs {
+          inherit system;
+          overlays = [overlays.default];
+        };
+        lib = nixpkgs.lib;
 
-           # Generate options doc for NixOS module
-           nixosEval = lib.evalModules {
-             modules = [ ./nix/modules/nixos/omnixy.nix ];
-           };
-           nixosOptionsMd = lib.nixosOptionsDoc {
-             inherit (nixosEval) options;
-             transformOptions = opt: opt;
-           };
+        # Generate options doc for NixOS module
+        nixosEval = lib.evalModules {
+          modules = [./nix/modules/nixos/omnixy.nix];
+        };
+        nixosOptionsMd = lib.nixosOptionsDoc {
+          inherit (nixosEval) options;
+          transformOptions = opt: opt;
+        };
+      in {
+        flake-evaluates = pkgs.runCommand "omnixy-flake-evaluates" {} "mkdir -p $out";
+        consumer-home =
+          if system == "x86_64-linux"
+          then homeConfigurations."demo@localhost".activationPackage
+          else pkgs.runCommand "skip-home-example" {} "mkdir -p $out";
+        vm-hyprland = let
+          testFile = "${toString ./.}/nix/tests/omnixy-hyprland.nix";
+        in
+          if (builtins.elem system ["x86_64-linux" "aarch64-linux"]) && (builtins.pathExists testFile)
+          then
+            nixpkgs.lib.nixos.runTest {
+              hostPkgs = pkgs;
+              imports = [(builtins.toPath testFile)];
+            }
+          else pkgs.runCommand "skip-vm-test" {} "mkdir -p $out";
 
-         in {
-           flake-evaluates = pkgs.runCommand "omnixy-flake-evaluates" {} "mkdir -p $out";
-           consumer-home = if system == "x86_64-linux" then homeConfigurations."demo@localhost".activationPackage else pkgs.runCommand "skip-home-example" {} "mkdir -p $out";
-           vm-hyprland =
-             let testFile = "${toString ./.}/nix/tests/omnixy-hyprland.nix"; in
-             if (builtins.elem system [ "x86_64-linux" "aarch64-linux" ]) && (builtins.pathExists testFile) then
-               nixpkgs.lib.nixos.runTest {
-                 hostPkgs = pkgs;
-                 imports = [ (builtins.toPath testFile) ];
-               }
-             else pkgs.runCommand "skip-vm-test" {} "mkdir -p $out";
+        # Export the generated options markdown as a check artifact
+        nixos-options-doc = pkgs.runCommand "omnixy-nixos-options-doc" {} ''
+          mkdir -p $out
+          cp ${nixosOptionsMd.optionsMarkdown} $out/omnixy-nixos-options.md
+        '';
+      }
+    );
 
-           # Export the generated options markdown as a check artifact
-           nixos-options-doc = pkgs.runCommand "omnixy-nixos-options-doc" {} ''
-             mkdir -p $out
-             cp ${nixosOptionsMd.optionsMarkdown} $out/omnixy-nixos-options.md
-           '';
-         }
-       );
-
-       templates = {
-         nixos = {
-           path = ./examples/nixos;
-           description = "NixOS consumer flake using Omnixy";
-         };
-         home-manager = {
-           path = ./examples/hm;
-           description = "Home Manager consumer flake using Omnixy";
-         };
-       };
-     };
- }
+    templates = {
+      nixos = {
+        path = ./examples/nixos;
+        description = "NixOS consumer flake using Omnixy";
+      };
+      home-manager = {
+        path = ./examples/hm;
+        description = "Home Manager consumer flake using Omnixy";
+      };
+    };
+  };
+}
